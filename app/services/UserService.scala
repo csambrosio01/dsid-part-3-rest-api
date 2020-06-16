@@ -21,4 +21,18 @@ class UserService @Inject()(
       throw PasswordException("Wrong password expression")
     }
   }
+
+  def login(login: Login): Future[User] = {
+    userRepository
+      .findUserByUsername(login.username)
+      .map { user =>
+        user.fold(throw WrongCredentialsException("Wrong credentials")) { user =>
+          if (user.password == login.password) {
+            user
+          } else {
+            throw WrongCredentialsException("Wrong credentials")
+          }
+        }
+      }
+  }
 }
