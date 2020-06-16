@@ -54,4 +54,43 @@ class UserController @Inject() (
       }
       .getOrElse(Future.successful(BadRequest("Bad json")))
   }
+
+  def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    request
+      .body
+      .asJson
+      .map(_.as[Login])
+      .map { login =>
+        val validation = for {
+          user <- userService.login(login)
+          (sessionId, encryptedCookie) <- sessionGenerator.createSession(user)
+        } yield (user, sessionId, encryptedCookie)
+
+        validation.map {
+          case (user, sessionId, encryptedCookie) =>
+            val session = request.session + (SESSION_ID -> sessionId)
+            Ok(Json.toJson(user))
+              .withSession(session)
+              .withCookies(encryptedCookie)
+
+          case _ => BadRequest("Could not login")
+        }
+          .recover {
+            case e: WrongCredentialsException =>
+              logger.warn(e.message)
+              BadRequest(Json.obj("error" -> e.getMessage))
+          }
+      }
+      .getOrElse(Future.successful(BadRequest("Bad json")))
+  }
+
+  def logout: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    request.session.get(SESSION_ID).foreach { sessionId =>
+      sessionService.delete(sessionId)
+    }
+
+    discardingSession {
+      Ok("Logged out")
+    }
+  }
 }
