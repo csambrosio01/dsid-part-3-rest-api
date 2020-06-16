@@ -9,4 +9,6 @@ import scala.concurrent.Future
 trait UserRepository {
 
   def create(user: CreateUser): Future[User]
+
+  def findUserByUsername(username: String): Future[Option[User]]
 }
