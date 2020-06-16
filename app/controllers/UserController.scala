@@ -93,4 +93,16 @@ class UserController @Inject() (
       Ok("Logged out")
     }
   }
+
+  def getLoggedUser: Action[AnyContent] = userAction.async { implicit request: UserRequest[AnyContent] =>
+    request
+      .userInfo
+      .fold(
+        Future.successful(
+          Unauthorized("You must be logged in to do this action")
+        )
+      ) { user =>
+        Future.successful(Ok(Json.toJson(user)))
+      }
+  }
 }

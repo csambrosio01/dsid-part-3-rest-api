@@ -4,6 +4,7 @@
 # ~~~~
 
 POST        /users/create                               controllers.UserController.createUser
+GET         /users/logged                               controllers.UserController.getLoggedUser
 
 POST        /login                                      controllers.UserController.login
 POST        /logout                                     controllers.UserController.logout
