@@ -1,12 +1,11 @@
 package controllers
 
-import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
+import model.FlightDestination
 import model.FlightDestination._
-import play.api.Logging
-import play.api.i18n.{Lang, Langs, MessagesApi}
-import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import play.api.i18n.{Langs, MessagesApi}
+import play.api.libs.json.Writes
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FlightService
 
 import scala.concurrent.ExecutionContext
@@ -20,10 +19,7 @@ class FlightController @Inject()(
                                 (
                                   implicit ec: ExecutionContext
                                 )
-  extends AbstractController(cc)
-    with Logging {
-
-  implicit val lang: Lang = langs.availables.head
+  extends BaseController(cc, langs, messagesApi) {
 
   def getFlightDestinations(
                              origin: String,
@@ -44,16 +40,6 @@ class FlightController @Inject()(
       viewBy
     )
 
-    futureFlightDestinations.map { flightDestinations =>
-      Ok(Json.toJson(flightDestinations)(Writes.seq(flightDestinationFormat)))
-    }
-      .recover {
-        case e: NotFoundException =>
-          NotFound(messagesApi(e.message, origin))
-        case e: AccessTokenException =>
-          BadRequest(messagesApi(e.message))
-        case _ =>
-          BadRequest(messagesApi("amadeus.generic_error"))
-      }
+    handleReturn[Seq[FlightDestination]](futureFlightDestinations)(Writes.seq(flightDestinationFormat))
   }
 }

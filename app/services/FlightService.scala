@@ -5,7 +5,7 @@ import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
 import model.{FlightDestination, FlightDestinationResult}
 import play.api.libs.json.Json
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests
 import model.FlightDestination._
 
@@ -22,6 +22,14 @@ class FlightService @Inject()(
 
   override val service = "amadeus"
 
+  private def prepareAmadeusRequest(url: String): Future[WSRequest] = {
+    client.getAccessToken
+      .map { accessToken =>
+        super.prepareFullRequest(client.url + url, 10 * 60)
+          .addHttpHeaders(play.api.http.HeaderNames.AUTHORIZATION -> accessToken)
+      }
+  }
+
   def searchFlightsDestinations(
                                  origin: String,
                                  departureDate: Option[String],
@@ -31,11 +39,7 @@ class FlightService @Inject()(
                                  maxPrice: Option[Int],
                                  viewBy: Option[String]
                                ): Future[Seq[FlightDestination]] = {
-    val response = client.getAccessToken
-      .map { accessToken =>
-        prepareFullRequest(client.url + "/shopping/flight-destinations", 10 * 60)
-          .addHttpHeaders(play.api.http.HeaderNames.AUTHORIZATION -> accessToken)
-      }
+    val response = prepareAmadeusRequest("/shopping/flight-destinations")
       .flatMap { request =>
         val parameters = Seq("origin" -> Option(origin),
           "departureDate" -> departureDate,
