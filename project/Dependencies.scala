@@ -16,6 +16,6 @@ object Dependencies {
   private val akkaClusterTyped = "com.typesafe.akka" %% "akka-cluster-typed" % akkaVersion
 
   val dependencies = Seq(
-    guice, scalaTest, playSlick, playSlickEvolutions, postgres, kalium, akkaDistributedData, akkaClusterTyped
+    guice, scalaTest, playSlick, playSlickEvolutions, postgres, kalium, akkaDistributedData, akkaClusterTyped, ws
   )
 }
