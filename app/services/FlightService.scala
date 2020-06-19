@@ -34,17 +34,24 @@ class FlightService @Inject()(
     val response = client.getAccessToken
       .map { accessToken =>
         prepareFullRequest(client.url + "/shopping/flight-destinations", 10 * 60)
-          .addQueryStringParameters("origin" -> origin)
           .addHttpHeaders(play.api.http.HeaderNames.AUTHORIZATION -> accessToken)
       }
       .flatMap { request =>
-        departureDate.fold(request) { departureDate => request.addQueryStringParameters("departureDate" -> departureDate) }
-        oneWay.fold(request) { oneWay => request.addQueryStringParameters("oneWay" -> oneWay.toString) }
-        duration.fold(request) { duration => request.addQueryStringParameters("duration" -> duration) }
-        nonStop.fold(request) { nonStop => request.addQueryStringParameters("nonStop" -> nonStop.toString) }
-        maxPrice.fold(request) { maxPrice => request.addQueryStringParameters("maxPrice" -> maxPrice.toString) }
-        viewBy.fold(request) { viewBy => request.addQueryStringParameters("viewBy" -> viewBy) }
-        request.get()
+        val parameters = Seq("origin" -> Option(origin),
+          "departureDate" -> departureDate,
+          "oneWay" -> oneWay,
+          "duration" -> duration,
+          "nonStop" -> nonStop,
+          "maxPrice" -> maxPrice,
+          "viewBy" -> viewBy
+        )
+          .collect {
+            case (key, Some(value)) => key -> value.toString
+          }
+
+        request
+          .addQueryStringParameters(parameters: _*)
+          .get()
       }
 
     verifyResult(response)
