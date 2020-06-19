@@ -8,3 +8,5 @@ GET         /users/logged                               controllers.UserControll
 
 POST        /login                                      controllers.UserController.login
 POST        /logout                                     controllers.UserController.logout
+
+GET         /flight-destinations                        controllers.FlightController.getFlightDestinations(origin: String, departureDate: Option[String], oneWay: Option[Boolean], duration: Option[String], nonStop: Option[Boolean], maxPrice: Option[Int], viewBy: Option[String])

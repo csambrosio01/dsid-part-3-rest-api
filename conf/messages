@@ -1,2 +1,4 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 amadeus.access_token.error=Erro ao acessar o Token, por favor, tente novamente mais tarde
+amadeus.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
+amadeus.flight_destination.not_found=Não encontramos nenhum vôo de destino, dado o aeroporto {0}
