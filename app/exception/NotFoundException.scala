@@ -1,3 +1,3 @@
 package exception
 
-case class NotFoundException(message: String) extends Exception(message)
+case class NotFoundException(message: String, args: Any*) extends Exception(message)
