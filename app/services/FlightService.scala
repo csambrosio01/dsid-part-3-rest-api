@@ -3,11 +3,11 @@ package services
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
+import model.FlightDestination._
 import model.{FlightDestination, FlightDestinationResult}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests
-import model.FlightDestination._
 
 import scala.concurrent.{ExecutionContext, Future}
 
