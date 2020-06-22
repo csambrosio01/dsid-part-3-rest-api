@@ -9,14 +9,14 @@ import play.api.mvc.{AbstractController, ControllerComponents, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseController @Inject()(
-                                         cc: ControllerComponents,
-                                         langs: Langs,
-                                         messagesApi: MessagesApi
-                                       )
-                                       (
-                                         implicit ec: ExecutionContext
-                                       )
+class BaseController @Inject()(
+                                cc: ControllerComponents,
+                                langs: Langs,
+                                messagesApi: MessagesApi
+                              )
+                              (
+                                implicit ec: ExecutionContext
+                              )
   extends AbstractController(cc)
     with Logging {
 
