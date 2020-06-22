@@ -1,14 +1,16 @@
 package controllers
 
 import javax.inject.Inject
-import model.FlightDestination
-import model.FlightDestination._
+import model.amadeus.FlightDestination._
+import model.amadeus.FlightOfferRequest._
+import model.amadeus.FlightOfferSearch._
+import model.amadeus.{FlightDestination, FlightOfferRequest, FlightOfferSearch}
 import play.api.i18n.{Langs, MessagesApi}
 import play.api.libs.json.Writes
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FlightService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class FlightController @Inject()(
                                   cc: ControllerComponents,
@@ -41,5 +43,16 @@ class FlightController @Inject()(
     )
 
     handleReturn[Seq[FlightDestination]](futureFlightDestinations)(Writes.seq(flightDestinationFormat))
+  }
+
+  def getFlightOffers: Action[AnyContent] = Action.async { implicit request =>
+    request
+      .body
+      .asJson
+      .map(_.as[FlightOfferRequest])
+      .map { request: FlightOfferRequest =>
+        handleReturn[Seq[FlightOfferSearch]](flightService.searchFlightOffers(request))(Writes.seq(flightOfferSearchFormat))
+      }
+      .getOrElse(Future.successful(BadRequest("Bad json")))
   }
 }
