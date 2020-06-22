@@ -39,7 +39,7 @@ class FlightService @Inject()(
                                  maxPrice: Option[Int],
                                  viewBy: Option[String]
                                ): Future[Seq[FlightDestination]] = {
-    val response = prepareAmadeusRequest("/shopping/flight-destinations")
+    val response = prepareAmadeusRequest("/v1/shopping/flight-destinations")
       .flatMap { request =>
         val parameters = Seq("origin" -> Option(origin),
           "departureDate" -> departureDate,

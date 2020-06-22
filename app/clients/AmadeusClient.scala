@@ -19,7 +19,7 @@ class AmadeusClient @Inject()(
   val url: String = serviceConfig.amadeusUrl
 
   def getAccessToken: Future[String] = {
-    val response = prepareFullRequest(url + "/security/oauth2/token", 10)
+    val response = prepareFullRequest(url + "/v1/security/oauth2/token", 10)
       .addHttpHeaders("Content-Type" -> "application/x-www-form-urlencoded")
       .post("grant_type=client_credentials&client_id=" + serviceConfig.amadeusApiKey + "&client_secret=" + serviceConfig.amadeusApiSecret)
 
