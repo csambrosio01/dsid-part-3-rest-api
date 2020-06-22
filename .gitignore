@@ -31,3 +31,4 @@ server.pid
 .cache
 .*
 !.gitignore
+!.github
