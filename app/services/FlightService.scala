@@ -65,7 +65,7 @@ class FlightService @Inject()(
       .map(_.data)
       .recover {
         case e: AccessTokenException => throw e
-        case _ => throw NotFoundException("amadeus.flight_destination.not_found")
+        case _ => throw NotFoundException("amadeus.flight_destination.not_found", origin)
       }
   }
 }
