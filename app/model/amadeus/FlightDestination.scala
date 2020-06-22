@@ -1,4 +1,4 @@
-package model
+package model.amadeus
 
 import java.util.Date
 

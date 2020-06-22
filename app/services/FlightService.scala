@@ -3,10 +3,9 @@ package services
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
-import model.FlightDestination._
+import model.amadeus.FlightDestination._
 import model.amadeus.FlightOfferSearch._
 import model.amadeus._
-import model.{FlightDestination, FlightDestinationResult}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests
