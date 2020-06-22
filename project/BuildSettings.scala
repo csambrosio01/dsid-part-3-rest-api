@@ -1,5 +1,7 @@
-import sbt.Keys._
 import Dependencies._
+import com.heroku.sbt.HerokuPlugin.autoImport.{herokuAppName, herokuJdkVersion}
+import sbt.Keys._
+import sbt._
 
 object BuildSettings {
 
@@ -12,4 +14,13 @@ object BuildSettings {
       libraryDependencies ++= dependencies
     )
   }
+
+  object Publish {
+
+    lazy val settings = Seq(
+      herokuAppName in Compile := "api-pousar",
+      herokuJdkVersion in Compile := "11"
+    )
+  }
+
 }
