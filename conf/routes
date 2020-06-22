@@ -3,6 +3,8 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
+GET         /health-check                               controllers.BaseController.healthCheck
+
 POST        /users/create                               controllers.UserController.createUser
 GET         /users/logged                               controllers.UserController.getLoggedUser
 
