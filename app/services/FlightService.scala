@@ -4,6 +4,8 @@ import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
 import model.FlightDestination._
+import model.amadeus.FlightOfferSearch._
+import model.amadeus._
 import model.{FlightDestination, FlightDestinationResult}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
@@ -66,6 +68,47 @@ class FlightService @Inject()(
       .recover {
         case e: AccessTokenException => throw e
         case _ => throw NotFoundException("amadeus.flight_destination.not_found", origin)
+      }
+  }
+
+  def searchFlightOffers(
+                          flightOfferRequest: FlightOfferRequest
+                        ): Future[Seq[FlightOfferSearch]] = {
+    val response = prepareAmadeusRequest("/v2/shopping/flight-offers")
+      .flatMap { request =>
+        val parameters = Seq(
+          "originLocationCode" -> Option(flightOfferRequest.originLocationCode),
+          "destinationLocationCode" -> Option(flightOfferRequest.destinationLocationCode),
+          "departureDate" -> Option(flightOfferRequest.departureDate.toString),
+          "adults" -> Option(flightOfferRequest.adults.toString),
+          "returnDate" -> flightOfferRequest.returnDate,
+          "children" -> flightOfferRequest.children,
+          "infants" -> flightOfferRequest.infants,
+          "travelClass" -> flightOfferRequest.travelClass,
+          "includedAirlineCodes" -> flightOfferRequest.includedAirlineCodes,
+          "excludedAirlineCodes" -> flightOfferRequest.excludedAirlineCodes,
+          "nonStop" -> flightOfferRequest.nonStop,
+          "currencyCode" -> flightOfferRequest.currencyCode,
+          "maxPrice" -> flightOfferRequest.maxPrice,
+          "max" -> flightOfferRequest.max
+        )
+          .collect {
+            case (key, Some(value)) => key -> value.toString
+          }
+
+        request
+          .addQueryStringParameters(parameters: _*)
+          .get()
+      }
+
+    verifyResult(response)
+      .map { result =>
+        Json.fromJson[FlightOfferSearchResult](result).get
+      }
+      .map(_.data)
+      .recover {
+        case e: AccessTokenException => throw e
+        case _ => throw NotFoundException("amadeus.flight_offers.not_found")
       }
   }
 }
