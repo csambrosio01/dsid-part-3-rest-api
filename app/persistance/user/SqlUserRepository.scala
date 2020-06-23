@@ -22,7 +22,7 @@ private class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   def email = column[String]("email", O.Unique)
 
-  def phoneNumber = column[Long]("phone_number", O.Unique)
+  def phoneNumber = column[String]("phone_number", O.Unique)
 
   def createdAt = column[Timestamp]("created_at")
 
