@@ -9,7 +9,7 @@ CREATE TABLE users (
     password                                    VARCHAR NOT NULL UNIQUE,
     name                                        VARCHAR NOT NULL,
     email                                       VARCHAR NOT NULL UNIQUE,
-    phone_number                                BIGINT NOT NULL UNIQUE,
+    phone_number                                VARCHAR(11) NOT NULL UNIQUE,
     created_at                                  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at                                  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     PRIMARY KEY (user_id)
