@@ -18,7 +18,7 @@ class UserService @Inject()(
     if (user.password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\\]).{8,40}$")) {
       userRepository.create(user)
     } else {
-      throw PasswordException("Wrong password expression")
+      throw PasswordException("user.create.bad_password")
     }
   }
 

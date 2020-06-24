@@ -65,7 +65,7 @@ class UserController @Inject() (
             }
         } catch {
           case e: PasswordException =>
-            Future.successful(BadRequest(e.getMessage))
+            Future.successful(BadRequest(messagesApi(e.getMessage)))
         }
       }
       .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
