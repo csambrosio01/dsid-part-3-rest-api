@@ -85,13 +85,13 @@ class UserController @Inject() (
         validation.map {
           case (user, sessionId, encryptedCookie) =>
             configureSession(user, sessionId, encryptedCookie, request)
-
-          case _ => BadRequest("Could not login")
         }
           .recover {
             case e: WrongCredentialsException =>
               logger.warn(e.message)
               BadRequest(Json.obj("error" -> messagesApi(e.getMessage)))
+
+            case _ => BadRequest(messagesApi("user.login.generic_error"))
           }
       }
       .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
