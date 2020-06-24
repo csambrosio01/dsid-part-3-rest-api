@@ -4,7 +4,7 @@ import exception.{PasswordException, WrongCredentialsException}
 import javax.inject.Inject
 import model.Login._
 import model.User._
-import model.{CreateUser, Login}
+import model.{CreateUser, Login, User}
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -26,6 +26,13 @@ class UserController @Inject() (
   extends AbstractController(cc)
     with Logging {
 
+  def configureSession(user: User, sessionId: String, encryptedCookie: Cookie, request: Request[AnyContent]): Result = {
+    val session = request.session + (SESSION_ID -> sessionId)
+    Ok(Json.toJson(user))
+      .withSession(session)
+      .withCookies(encryptedCookie)
+  }
+
   def createUser(): Action[AnyContent] = Action.async { implicit request =>
     request
       .body
@@ -35,14 +42,11 @@ class UserController @Inject() (
         val validation = for {
           userCreated <- userService.createUser(user)
           (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
-        } yield (sessionId, encryptedCookie)
+        } yield (userCreated, sessionId, encryptedCookie)
 
         validation.map {
-          case (sessionId, encryptedCookie) =>
-            val session = request.session + (SESSION_ID -> sessionId)
-            Ok("Logged in")
-              .withSession(session)
-              .withCookies(encryptedCookie)
+          case (userCreated, sessionId, encryptedCookie) =>
+            configureSession(userCreated, sessionId, encryptedCookie, request)
         }
           .recover {
             case e: PasswordException =>
@@ -68,10 +72,7 @@ class UserController @Inject() (
 
         validation.map {
           case (user, sessionId, encryptedCookie) =>
-            val session = request.session + (SESSION_ID -> sessionId)
-            Ok(Json.toJson(user))
-              .withSession(session)
-              .withCookies(encryptedCookie)
+            configureSession(user, sessionId, encryptedCookie, request)
 
           case _ => BadRequest("Could not login")
         }
