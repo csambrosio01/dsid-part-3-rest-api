@@ -61,7 +61,7 @@ class UserController @Inject() (
                 BadRequest(messagesApi("user.create.database_error"))
 
               case _ =>
-                BadRequest("Could not create user")
+                BadRequest(messagesApi("user.create.generic_error"))
             }
         } catch {
           case e: PasswordException =>
