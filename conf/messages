@@ -2,3 +2,13 @@
 amadeus.access_token.error=Erro ao acessar o Token, por favor, tente novamente mais tarde
 amadeus.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
 amadeus.flight_destination.not_found=Não encontramos nenhum vôo de destino, dado o aeroporto {0}
+
+user.create.database_error=Não foi possível criar o seu usuário, pois os dados inseridos já estão sendo utilizados.
+user.create.generic_error=Não foi possível criar o seu usuário, tente novamente mais tarde.
+user.create.bad_password=A senha inserida não atinge os requisitos mínimos de segurança.
+user.login.wrong_credentials=As credenciais inseridas não são válidas.
+user.login.generic_error=Não foi possível iniciar a sua sessão, tente novamente mais tarde.
+user.logout.success=Usuário deslogado com sucesso!
+user.unauthorized=Você precisa estar logado para prosseguir com esta ação.
+
+bad_json=A requisição enviada não pode ser processada. Por favor, entre em contato com o suporte ao cliente.
