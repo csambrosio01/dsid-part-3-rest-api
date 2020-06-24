@@ -112,7 +112,7 @@ class UserController @Inject() (
       .userInfo
       .fold(
         Future.successful(
-          Unauthorized("You must be logged in to do this action")
+          Unauthorized(messagesApi("user.unauthorized"))
         )
       ) { user =>
         Future.successful(Ok(Json.toJson(user)))
