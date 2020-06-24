@@ -94,7 +94,7 @@ class UserController @Inject() (
               BadRequest(Json.obj("error" -> messagesApi(e.getMessage)))
           }
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
   }
 
   def logout: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>

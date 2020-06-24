@@ -53,6 +53,6 @@ class FlightController @Inject()(
       .map { request: FlightOfferRequest =>
         handleReturn[Seq[FlightOfferSearch]](flightService.searchFlightOffers(request))(Writes.seq(flightOfferSearchFormat))
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
   }
 }
