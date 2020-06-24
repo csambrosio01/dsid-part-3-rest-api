@@ -58,17 +58,17 @@ class UserController @Inject() (
             .recover {
               case e: PSQLException =>
                 logger.error(e.getMessage)
-                BadRequest(messagesApi("user.create.database_error"))
+                BadRequest(Json.obj("error" -> messagesApi("user.create.database_error")))
 
               case _ =>
-                BadRequest(messagesApi("user.create.generic_error"))
+                BadRequest(Json.obj("error" -> messagesApi("user.create.generic_error")))
             }
         } catch {
           case e: PasswordException =>
-            Future.successful(BadRequest(messagesApi(e.getMessage)))
+            Future.successful(BadRequest(Json.obj("error" -> messagesApi(e.getMessage))))
         }
       }
-      .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("bad_json")))))
   }
 
   def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
@@ -91,10 +91,10 @@ class UserController @Inject() (
               logger.warn(e.message)
               BadRequest(Json.obj("error" -> messagesApi(e.getMessage)))
 
-            case _ => BadRequest(messagesApi("user.login.generic_error"))
+            case _ => BadRequest(Json.obj("error" -> messagesApi("user.login.generic_error")))
           }
       }
-      .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("bad_json")))))
   }
 
   def logout: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
@@ -112,7 +112,7 @@ class UserController @Inject() (
       .userInfo
       .fold(
         Future.successful(
-          Unauthorized(messagesApi("user.unauthorized"))
+          Unauthorized(Json.obj("error" -> messagesApi("user.unauthorized")))
         )
       ) { user =>
         Future.successful(Ok(Json.toJson(user)))
