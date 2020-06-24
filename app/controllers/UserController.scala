@@ -5,7 +5,9 @@ import javax.inject.Inject
 import model.Login._
 import model.User._
 import model.{CreateUser, Login, User}
+import org.postgresql.util.PSQLException
 import play.api.Logging
+import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.UserService
@@ -18,13 +20,17 @@ class UserController @Inject() (
                                  cc: ControllerComponents,
                                  sessionService: SessionService,
                                  userService: UserService,
-                                 userAction: UserInfoAction
+                                 userAction: UserInfoAction,
+                                 langs: Langs,
+                                 messagesApi: MessagesApi
                                )
                                (
                                  implicit ec: ExecutionContext
                                )
   extends AbstractController(cc)
     with Logging {
+
+  implicit val lang: Lang = langs.availables.head
 
   def configureSession(user: User, sessionId: String, encryptedCookie: Cookie, request: Request[AnyContent]): Result = {
     val session = request.session + (SESSION_ID -> sessionId)
@@ -50,6 +56,10 @@ class UserController @Inject() (
               configureSession(userCreated, sessionId, encryptedCookie, request)
           }
             .recover {
+              case e: PSQLException =>
+                logger.error(e.getMessage)
+                BadRequest(messagesApi("user.create.database_error"))
+
               case _ =>
                 BadRequest("Could not create user")
             }
