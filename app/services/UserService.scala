@@ -26,11 +26,11 @@ class UserService @Inject()(
     userRepository
       .findUserByUsername(login.username)
       .map { user =>
-        user.fold(throw WrongCredentialsException("Wrong credentials")) { user =>
+        user.fold(throw WrongCredentialsException("user.login.wrong_credentials")) { user =>
           if (user.password == login.password) {
             user
           } else {
-            throw WrongCredentialsException("Wrong credentials")
+            throw WrongCredentialsException("user.login.wrong_credentials")
           }
         }
       }
