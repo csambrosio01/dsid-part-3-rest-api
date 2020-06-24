@@ -15,7 +15,7 @@ class UserService @Inject()(
                            ) {
 
   def createUser(user: CreateUser): Future[User] = {
-    if (user.password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\\]).{8,40}$")) {
+    if (user.password.matches("""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#(){}?:;><=.,^~_+-\[\]])[A-Za-z\d@$!%*?&#(){}?:;><=.,^~_+-\[\]]{8,40}$""")) {
       userRepository.create(user)
     } else {
       throw PasswordException("Wrong password expression")
