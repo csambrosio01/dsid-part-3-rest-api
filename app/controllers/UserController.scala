@@ -42,14 +42,11 @@ class UserController @Inject() (
         val validation = for {
           userCreated <- userService.createUser(user)
           (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
-        } yield (sessionId, encryptedCookie)
+        } yield (userCreated, sessionId, encryptedCookie)
 
         validation.map {
-          case (sessionId, encryptedCookie) =>
-            val session = request.session + (SESSION_ID -> sessionId)
-            Ok("Logged in")
-              .withSession(session)
-              .withCookies(encryptedCookie)
+          case (userCreated, sessionId, encryptedCookie) =>
+            configureSession(userCreated, sessionId, encryptedCookie, request)
         }
           .recover {
             case e: PasswordException =>
