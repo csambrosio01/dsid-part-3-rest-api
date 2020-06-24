@@ -68,7 +68,7 @@ class UserController @Inject() (
             Future.successful(BadRequest(Json.obj("error" -> messagesApi(e.getMessage))))
         }
       }
-      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("bad_json")))))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 
   def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
@@ -94,7 +94,7 @@ class UserController @Inject() (
             case _ => BadRequest(Json.obj("error" -> messagesApi("user.login.generic_error")))
           }
       }
-      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("bad_json")))))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 
   def logout: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>

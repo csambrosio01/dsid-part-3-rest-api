@@ -10,5 +10,5 @@ user.login.generic_error=Não foi possível iniciar a sua sessão, tente novamen
 user.logout.success=Usuário deslogado com sucesso!
 user.unauthorized=Você precisa estar logado para prosseguir com esta ação.
 
-bad_json=A requisição enviada não pode ser processada. Por favor, entre em contato com o suporte ao cliente.
+pousar.bad_json=A requisição enviada não pode ser processada. Por favor, entre em contato com o suporte ao cliente.
 pousar.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
