@@ -36,7 +36,7 @@ class BaseController @Inject()(
         case e: AccessTokenException =>
           BadRequest(Json.obj("error" -> messagesApi(e.message)))
         case _ =>
-          BadRequest(Json.obj("error" -> messagesApi("amadeus.generic_error")))
+          BadRequest(Json.obj("error" -> messagesApi("pousar.generic_error")))
       }
   }
 }

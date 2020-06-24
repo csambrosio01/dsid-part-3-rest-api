@@ -1,6 +1,5 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 amadeus.access_token.error=Erro ao acessar o Token, por favor, tente novamente mais tarde
-amadeus.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
 amadeus.flight_destination.not_found=Não encontramos nenhum vôo de destino, dado o aeroporto {0}
 
 user.create.database_error=Não foi possível criar o seu usuário, pois os dados inseridos já estão sendo utilizados.
@@ -12,3 +11,4 @@ user.logout.success=Usuário deslogado com sucesso!
 user.unauthorized=Você precisa estar logado para prosseguir com esta ação.
 
 bad_json=A requisição enviada não pode ser processada. Por favor, entre em contato com o suporte ao cliente.
+pousar.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
