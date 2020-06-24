@@ -68,7 +68,7 @@ class UserController @Inject() (
             Future.successful(BadRequest(e.getMessage))
         }
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(messagesApi("bad_json"))))
   }
 
   def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
