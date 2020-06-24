@@ -18,7 +18,7 @@ class UserService @Inject()(
     if (user.password.matches("""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#(){}?:;><=.,^~_+-\[\]])[A-Za-z\d@$!%*?&#(){}?:;><=.,^~_+-\[\]]{8,40}$""")) {
       userRepository.create(user)
     } else {
-      throw PasswordException("Wrong password expression")
+      throw PasswordException("user.create.bad_password")
     }
   }
 
@@ -26,11 +26,11 @@ class UserService @Inject()(
     userRepository
       .findUserByUsername(login.username)
       .map { user =>
-        user.fold(throw WrongCredentialsException("Wrong credentials")) { user =>
+        user.fold(throw WrongCredentialsException("user.login.wrong_credentials")) { user =>
           if (user.password == login.password) {
             user
           } else {
-            throw WrongCredentialsException("Wrong credentials")
+            throw WrongCredentialsException("user.login.wrong_credentials")
           }
         }
       }

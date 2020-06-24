@@ -5,7 +5,9 @@ import javax.inject.Inject
 import model.Login._
 import model.User._
 import model.{CreateUser, Login, User}
+import org.postgresql.util.PSQLException
 import play.api.Logging
+import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.UserService
@@ -18,13 +20,17 @@ class UserController @Inject() (
                                  cc: ControllerComponents,
                                  sessionService: SessionService,
                                  userService: UserService,
-                                 userAction: UserInfoAction
+                                 userAction: UserInfoAction,
+                                 langs: Langs,
+                                 messagesApi: MessagesApi
                                )
                                (
                                  implicit ec: ExecutionContext
                                )
   extends AbstractController(cc)
     with Logging {
+
+  implicit val lang: Lang = langs.availables.head
 
   def configureSession(user: User, sessionId: String, encryptedCookie: Cookie, request: Request[AnyContent]): Result = {
     val session = request.session + (SESSION_ID -> sessionId)
@@ -39,24 +45,30 @@ class UserController @Inject() (
       .asJson
       .map(_.as[CreateUser])
       .map { user: CreateUser =>
-        val validation = for {
-          userCreated <- userService.createUser(user)
-          (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
-        } yield (userCreated, sessionId, encryptedCookie)
+        try {
+          val validation = for {
+            userCreated <- userService.createUser(user)
+            (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
+          } yield (userCreated, sessionId, encryptedCookie)
 
-        validation.map {
-          case (userCreated, sessionId, encryptedCookie) =>
-            configureSession(userCreated, sessionId, encryptedCookie, request)
-        }
-          .recover {
-            case e: PasswordException =>
-              BadRequest(e.getMessage)
-
-            case _ =>
-              BadRequest("Could not create user")
+          validation.map {
+            case (userCreated, sessionId, encryptedCookie) =>
+              configureSession(userCreated, sessionId, encryptedCookie, request)
           }
+            .recover {
+              case e: PSQLException =>
+                logger.error(e.getMessage)
+                BadRequest(Json.obj("error" -> messagesApi("user.create.database_error")))
+
+              case _ =>
+                BadRequest(Json.obj("error" -> messagesApi("user.create.generic_error")))
+            }
+        } catch {
+          case e: PasswordException =>
+            Future.successful(BadRequest(Json.obj("error" -> messagesApi(e.getMessage))))
+        }
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 
   def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
@@ -73,16 +85,16 @@ class UserController @Inject() (
         validation.map {
           case (user, sessionId, encryptedCookie) =>
             configureSession(user, sessionId, encryptedCookie, request)
-
-          case _ => BadRequest("Could not login")
         }
           .recover {
             case e: WrongCredentialsException =>
               logger.warn(e.message)
-              BadRequest(Json.obj("error" -> e.getMessage))
+              BadRequest(Json.obj("error" -> messagesApi(e.getMessage)))
+
+            case _ => BadRequest(Json.obj("error" -> messagesApi("user.login.generic_error")))
           }
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 
   def logout: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
@@ -91,7 +103,7 @@ class UserController @Inject() (
     }
 
     discardingSession {
-      Ok("Logged out")
+      Ok(messagesApi("user.logout.success"))
     }
   }
 
@@ -100,7 +112,7 @@ class UserController @Inject() (
       .userInfo
       .fold(
         Future.successful(
-          Unauthorized("You must be logged in to do this action")
+          Unauthorized(Json.obj("error" -> messagesApi("user.unauthorized")))
         )
       ) { user =>
         Future.successful(Ok(Json.toJson(user)))

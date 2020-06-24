@@ -32,11 +32,11 @@ class BaseController @Inject()(
     }
       .recover {
         case e: NotFoundException =>
-          NotFound(messagesApi(e.message, e.args))
+          NotFound(Json.obj("error" -> messagesApi(e.message, e.args)))
         case e: AccessTokenException =>
-          BadRequest(messagesApi(e.message))
+          BadRequest(Json.obj("error" -> messagesApi(e.message)))
         case _ =>
-          BadRequest(messagesApi("amadeus.generic_error"))
+          BadRequest(Json.obj("error" -> messagesApi("pousar.generic_error")))
       }
   }
 }

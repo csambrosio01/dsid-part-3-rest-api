@@ -6,7 +6,7 @@ import model.amadeus.FlightOfferRequest._
 import model.amadeus.FlightOfferSearch._
 import model.amadeus.{FlightDestination, FlightOfferRequest, FlightOfferSearch}
 import play.api.i18n.{Langs, MessagesApi}
-import play.api.libs.json.Writes
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FlightService
 
@@ -53,6 +53,6 @@ class FlightController @Inject()(
       .map { request: FlightOfferRequest =>
         handleReturn[Seq[FlightOfferSearch]](flightService.searchFlightOffers(request))(Writes.seq(flightOfferSearchFormat))
       }
-      .getOrElse(Future.successful(BadRequest("Bad json")))
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 }
