@@ -103,7 +103,7 @@ class UserController @Inject() (
     }
 
     discardingSession {
-      Ok("Logged out")
+      Ok(messagesApi("user.logout.success"))
     }
   }
 
