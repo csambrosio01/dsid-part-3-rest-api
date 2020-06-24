@@ -39,22 +39,24 @@ class UserController @Inject() (
       .asJson
       .map(_.as[CreateUser])
       .map { user: CreateUser =>
-        val validation = for {
-          userCreated <- userService.createUser(user)
-          (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
-        } yield (userCreated, sessionId, encryptedCookie)
+        try {
+          val validation = for {
+            userCreated <- userService.createUser(user)
+            (sessionId, encryptedCookie) <- sessionGenerator.createSession(userCreated)
+          } yield (userCreated, sessionId, encryptedCookie)
 
-        validation.map {
-          case (userCreated, sessionId, encryptedCookie) =>
-            configureSession(userCreated, sessionId, encryptedCookie, request)
-        }
-          .recover {
-            case e: PasswordException =>
-              BadRequest(e.getMessage)
-
-            case _ =>
-              BadRequest("Could not create user")
+          validation.map {
+            case (userCreated, sessionId, encryptedCookie) =>
+              configureSession(userCreated, sessionId, encryptedCookie, request)
           }
+            .recover {
+              case _ =>
+                BadRequest("Could not create user")
+            }
+        } catch {
+          case e: PasswordException =>
+            Future.successful(BadRequest(e.getMessage))
+        }
       }
       .getOrElse(Future.successful(BadRequest("Bad json")))
   }
