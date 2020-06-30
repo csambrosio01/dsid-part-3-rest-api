@@ -1,5 +1,8 @@
 package services
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
@@ -108,6 +111,44 @@ class FlightService @Inject()(
       .recover {
         case e: AccessTokenException => throw e
         case _ => throw NotFoundException("amadeus.flight_offers.not_found")
+      }
+  }
+
+  def searchFlightOffersHighlights: Future[Seq[FlightOfferSearch]] = {
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val flightOfferRequestNYCToBOS = FlightOfferRequest(
+      originLocationCode = "NYC",
+      destinationLocationCode = "BOS",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestAMSToMAD = FlightOfferRequest(
+      originLocationCode = "AMS",
+      destinationLocationCode = "MAD",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestBRUToLHR = FlightOfferRequest(
+      originLocationCode = "BRU",
+      destinationLocationCode = "LHR",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    searchFlightOffers(flightOfferRequestNYCToBOS)
+      .flatMap { resultNYCToBOS =>
+        searchFlightOffers(flightOfferRequestAMSToMAD)
+          .flatMap { resultAMSToMAD =>
+            searchFlightOffers(flightOfferRequestBRUToLHR)
+              .map { resultBRUToLHR =>
+                resultNYCToBOS ++ resultBRUToLHR ++ resultAMSToMAD
+              }
+          }
       }
   }
 }
