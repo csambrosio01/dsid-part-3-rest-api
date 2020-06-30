@@ -55,4 +55,8 @@ class FlightController @Inject()(
       }
       .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
+
+  def getFlightOffersHighlights: Action[AnyContent] = Action.async { _ =>
+    handleReturn[Seq[FlightOfferSearch]](flightService.searchFlightOffersHighlights)(Writes.seq(flightOfferSearchFormat))
+  }
 }

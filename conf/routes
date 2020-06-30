@@ -13,3 +13,4 @@ POST        /logout                                     controllers.UserControll
 
 GET         /flight-destinations                        controllers.FlightController.getFlightDestinations(origin: String, departureDate: Option[String], oneWay: Option[Boolean], duration: Option[String], nonStop: Option[Boolean], maxPrice: Option[Int], viewBy: Option[String])
 POST        /flight-offers                              controllers.FlightController.getFlightOffers
+GET         /flight-offers/highlights                   controllers.FlightController.getFlightOffersHighlights
