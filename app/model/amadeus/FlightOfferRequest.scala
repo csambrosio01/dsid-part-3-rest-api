@@ -11,17 +11,17 @@ case class FlightOfferRequest(
                                originLocationCode: String,
                                destinationLocationCode: String,
                                departureDate: String,
-                               returnDate: Option[String],
                                adults: Int,
-                               children: Option[Int],
-                               infants: Option[Int],
-                               travelClass: Option[TravelClass.Value],
-                               includedAirlineCodes: Option[String],
-                               excludedAirlineCodes: Option[String],
-                               nonStop: Option[Boolean],
-                               currencyCode: Option[String],
-                               maxPrice: Option[Int],
-                               max: Option[Int]
+                               returnDate: Option[String] = None,
+                               children: Option[Int] = None,
+                               infants: Option[Int] = None,
+                               travelClass: Option[TravelClass.Value] = None,
+                               includedAirlineCodes: Option[String] = None,
+                               excludedAirlineCodes: Option[String] = None,
+                               nonStop: Option[Boolean] = None,
+                               currencyCode: Option[String] = None,
+                               maxPrice: Option[Int] = None,
+                               max: Option[Int] = None
                              )
 
 object FlightOfferRequest {
