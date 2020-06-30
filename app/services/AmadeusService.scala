@@ -15,7 +15,7 @@ import requests.BaseExternalRequests
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FlightService @Inject()(
+class AmadeusService @Inject()(
                                client: AmadeusClient,
                                ws: WSClient
                              )
