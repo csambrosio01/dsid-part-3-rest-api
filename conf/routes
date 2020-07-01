@@ -17,5 +17,6 @@ GET         /flight-offers/highlights                   controllers.FlightContro
 GET         /flight-offers/air/highlights               controllers.FlightController.getFlightOffersHighlightsAirPage
 
 POST        /hotel-offers                               controllers.HotelController.getHotelOffers
+GET         /hotel-offers/highlights                    controllers.HotelController.getHotelOffersHighlights
 
 GET         /search                                     controllers.AirportController.searchAirportOrCity(airportOrCity: String)
