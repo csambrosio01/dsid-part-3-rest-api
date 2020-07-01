@@ -59,4 +59,8 @@ class FlightController @Inject()(
   def getFlightOffersHighlights: Action[AnyContent] = Action.async { _ =>
     handleReturn[Seq[FlightOfferSearch]](amadeusService.searchFlightOffersHighlights)(Writes.seq(flightOfferSearchFormat))
   }
+
+  def getFlightOffersHighlightsAirPage: Action[AnyContent] = Action.async { _ =>
+    handleReturn[Seq[FlightOfferSearch]](amadeusService.searchFlightOffersHighlightsAirPage)(Writes.seq(flightOfferSearchFormat))
+  }
 }

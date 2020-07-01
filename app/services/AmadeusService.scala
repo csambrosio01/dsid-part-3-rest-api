@@ -153,6 +153,77 @@ class AmadeusService @Inject()(
       }
   }
 
+  def searchFlightOffersHighlightsAirPage: Future[Seq[FlightOfferSearch]] = {
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val flightOfferRequestNYCToWAS = FlightOfferRequest(
+      originLocationCode = "NYC",
+      destinationLocationCode = "WAS",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestAMSToLHR = FlightOfferRequest(
+      originLocationCode = "AMS",
+      destinationLocationCode = "LHR",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestBRUToDAL = FlightOfferRequest(
+      originLocationCode = "BRU",
+      destinationLocationCode = "PAR",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestLASToBRU = FlightOfferRequest(
+      originLocationCode = "LAS",
+      destinationLocationCode = "BRU",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestORDToHND = FlightOfferRequest(
+      originLocationCode = "ORD",
+      destinationLocationCode = "HND",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    val flightOfferRequestATLToLUR = FlightOfferRequest(
+      originLocationCode = "ATL",
+      destinationLocationCode = "SEA",
+      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      adults = 1,
+      max = Some(1)
+    )
+
+    searchFlightOffers(flightOfferRequestNYCToWAS)
+      .flatMap { resultNYCToWAS =>
+        searchFlightOffers(flightOfferRequestAMSToLHR)
+          .flatMap { resultAMSToLHR =>
+            searchFlightOffers(flightOfferRequestBRUToDAL)
+              .flatMap { resultBRUToDAL =>
+                searchFlightOffers(flightOfferRequestLASToBRU)
+                  .flatMap { resultLASToBRU =>
+                    searchFlightOffers(flightOfferRequestORDToHND)
+                      .flatMap { resultORDToHND =>
+                        searchFlightOffers(flightOfferRequestATLToLUR)
+                          .map { resultATLToLUR =>
+                            resultNYCToWAS ++ resultAMSToLHR ++ resultBRUToDAL ++ resultLASToBRU ++ resultORDToHND ++ resultATLToLUR
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  }
+
   def searchAirportOrCity(airportOrCity: String): Future[Seq[Location]] = {
     val response = prepareAmadeusRequest("/v1/reference-data/locations")
       .flatMap { request =>
