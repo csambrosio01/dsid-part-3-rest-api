@@ -16,12 +16,12 @@ import requests.BaseExternalRequests
 import scala.concurrent.{ExecutionContext, Future}
 
 class AmadeusService @Inject()(
-                               client: AmadeusClient,
-                               ws: WSClient
-                             )
-                             (
-                               implicit ec: ExecutionContext
-                             )
+                                client: AmadeusClient,
+                                ws: WSClient
+                              )
+                              (
+                                implicit ec: ExecutionContext
+                              )
   extends BaseExternalRequests(ws) {
 
   override val service = "amadeus"
