@@ -1,7 +1,7 @@
 package services
 
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.{Calendar, Date}
 
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
@@ -259,7 +259,7 @@ class AmadeusService @Inject()(
           "roomQuantity" -> Some(hotelSearchRequest.roomQuantity),
           "adults" -> Some(hotelSearchRequest.adults),
           "radius" -> Some(hotelSearchRequest.radius),
-          "ratings" -> hotelSearchRequest.ratings,
+          "ratings" -> hotelSearchRequest.ratings.mkString(","),
           "priceRange" -> hotelSearchRequest.priceRange,
           "lang" -> "pt-BR"
         )
@@ -280,6 +280,42 @@ class AmadeusService @Inject()(
       .recover {
         case e: AccessTokenException => throw e
         case _ => throw NotFoundException("amadeus.hotel_offers.not_found")
+      }
+  }
+
+  def searchHotelOffersHighlights: Future[Seq[HotelOffers]] = {
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val oneDayInMillis = 24 * 60 * 60 * 1000
+    val hotelOfferRequestNYC = HotelOfferSearchRequest(
+      cityCode = "NYC",
+      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
+      ratings = Some(Seq(4,5))
+    )
+
+    val hotelOfferRequestLAS = HotelOfferSearchRequest(
+      cityCode = "LAS",
+      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
+      ratings = Some(Seq(3,4))
+    )
+
+    val hotelOfferRequestLON = HotelOfferSearchRequest(
+      cityCode = "LON",
+      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
+      ratings = Some(Seq(2,3))
+    )
+
+    getHotelOffers(hotelOfferRequestNYC)
+      .flatMap { resultNYC =>
+        getHotelOffers(hotelOfferRequestLAS)
+          .flatMap { resultLAS =>
+            getHotelOffers(hotelOfferRequestLON)
+              .map { resultLON =>
+                Seq(resultNYC.head, resultLAS.head, resultLON.head)
+              }
+          }
       }
   }
 }
