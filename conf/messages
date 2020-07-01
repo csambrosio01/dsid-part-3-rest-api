@@ -2,6 +2,7 @@
 amadeus.access_token.error=Erro ao acessar o Token, por favor, tente novamente mais tarde
 amadeus.flight_destination.not_found=Não encontramos nenhum vôo de destino, dado o aeroporto {0}
 amadeus.airportOrCity.not_found=Nenhum resultado encontrado
+amadeus.hotel_offers.not_found=Não encontramos nenhuma oferta de hotel para as informações inseridas.
 
 user.create.database_error=Não foi possível criar o seu usuário, pois os dados inseridos já estão sendo utilizados.
 user.create.generic_error=Não foi possível criar o seu usuário, tente novamente mais tarde.

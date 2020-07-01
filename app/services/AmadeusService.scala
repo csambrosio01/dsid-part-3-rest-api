@@ -6,10 +6,13 @@ import java.util.Calendar
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
-import model.amadeus.FlightDestination._
-import model.amadeus.FlightOfferSearch._
 import model.amadeus.Location._
 import model.amadeus._
+import model.amadeus.flight.FlightDestination._
+import model.amadeus.flight.FlightOfferSearch._
+import model.amadeus.flight._
+import model.amadeus.hotel.{HotelOfferSearchRequest, HotelOffers, HotelOffersResult}
+import model.amadeus.hotel.HotelOffers._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests
@@ -243,6 +246,40 @@ class AmadeusService @Inject()(
       .recover {
         case e: AccessTokenException => throw e
         case _ => throw NotFoundException("amadeus.airportOrCity.not_found")
+      }
+  }
+
+  def getHotelOffers(hotelSearchRequest: HotelOfferSearchRequest): Future[Seq[HotelOffers]] = {
+    val response = prepareAmadeusRequest("/v2/shopping/hotel-offers")
+      .flatMap { request =>
+        val parameters = Seq(
+          "cityCode" -> Some(hotelSearchRequest.cityCode),
+          "checkInDate" -> Some(hotelSearchRequest.checkInDate),
+          "checkOutDate" -> Some(hotelSearchRequest.checkOutDate),
+          "roomQuantity" -> Some(hotelSearchRequest.roomQuantity),
+          "adults" -> Some(hotelSearchRequest.adults),
+          "radius" -> Some(hotelSearchRequest.radius),
+          "ratings" -> hotelSearchRequest.ratings,
+          "priceRange" -> hotelSearchRequest.priceRange,
+          "lang" -> "pt-BR"
+        )
+          .collect {
+            case (key, Some(value)) => key -> value.toString
+          }
+
+        request
+          .addQueryStringParameters(parameters: _*)
+          .get()
+      }
+
+    verifyResult(response)
+      .map { result =>
+        Json.fromJson[HotelOffersResult](result).get
+      }
+      .map(_.data)
+      .recover {
+        case e: AccessTokenException => throw e
+        case _ => throw NotFoundException("amadeus.hotel_offers.not_found")
       }
   }
 }

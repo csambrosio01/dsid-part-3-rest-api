@@ -1,10 +1,10 @@
 package controllers
 
 import javax.inject.Inject
-import model.amadeus.FlightDestination._
-import model.amadeus.FlightOfferRequest._
-import model.amadeus.FlightOfferSearch._
-import model.amadeus.{FlightDestination, FlightOfferRequest, FlightOfferSearch}
+import model.amadeus.flight.FlightDestination._
+import model.amadeus.flight.FlightOfferRequest._
+import model.amadeus.flight.FlightOfferSearch._
+import model.amadeus.flight.{FlightDestination, FlightOfferRequest, FlightOfferSearch}
 import play.api.i18n.{Langs, MessagesApi}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
