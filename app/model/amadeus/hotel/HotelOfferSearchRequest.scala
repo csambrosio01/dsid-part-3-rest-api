@@ -9,8 +9,8 @@ case class HotelOfferSearchRequest(
                                     roomQuantity: Int = 1,
                                     adults: Int = 1,
                                     radius: Int = 5,
-                                    ratings: Option[Seq[Int]],
-                                    priceRange: Option[String]
+                                    ratings: Option[Seq[Int]] = None,
+                                    priceRange: Option[String] = None
                                   )
 
 object HotelOfferSearchRequest {
