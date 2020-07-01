@@ -8,6 +8,7 @@ import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
 import model.amadeus.FlightDestination._
 import model.amadeus.FlightOfferSearch._
+import model.amadeus.Location._
 import model.amadeus._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
@@ -15,13 +16,13 @@ import requests.BaseExternalRequests
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FlightService @Inject()(
-                               client: AmadeusClient,
-                               ws: WSClient
-                             )
-                             (
-                               implicit ec: ExecutionContext
-                             )
+class AmadeusService @Inject()(
+                                client: AmadeusClient,
+                                ws: WSClient
+                              )
+                              (
+                                implicit ec: ExecutionContext
+                              )
   extends BaseExternalRequests(ws) {
 
   override val service = "amadeus"
@@ -149,6 +150,28 @@ class FlightService @Inject()(
                 resultNYCToBOS ++ resultBRUToLHR ++ resultAMSToMAD
               }
           }
+      }
+  }
+
+  def searchAirportOrCity(airportOrCity: String): Future[Seq[Location]] = {
+    val response = prepareAmadeusRequest("/v1/reference-data/locations")
+      .flatMap { request =>
+        request
+          .addQueryStringParameters(
+            "subType" -> "AIRPORT,CITY",
+            "keyword" -> airportOrCity
+          )
+          .get()
+      }
+
+    verifyResult(response)
+      .map { result =>
+        Json.fromJson[LocationResult](result).get
+      }
+      .map(_.data)
+      .recover {
+        case e: AccessTokenException => throw e
+        case _ => throw NotFoundException("amadeus.airportOrCity.not_found")
       }
   }
 }
