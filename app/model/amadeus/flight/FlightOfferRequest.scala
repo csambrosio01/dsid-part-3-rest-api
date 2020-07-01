@@ -1,4 +1,4 @@
-package model.amadeus
+package model.amadeus.flight
 
 import play.api.libs.json.{Format, Json, OFormat}
 import utils.EnumFormatUtils

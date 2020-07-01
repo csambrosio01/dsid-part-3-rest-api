@@ -6,10 +6,11 @@ import java.util.Calendar
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
 import javax.inject.Inject
-import model.amadeus.FlightDestination._
-import model.amadeus.FlightOfferSearch._
+import model.amadeus.flight.FlightDestination._
+import model.amadeus.flight.FlightOfferSearch._
 import model.amadeus.Location._
 import model.amadeus._
+import model.amadeus.flight.{FlightDestination, FlightDestinationResult, FlightOfferRequest, FlightOfferSearch, FlightOfferSearchResult}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests

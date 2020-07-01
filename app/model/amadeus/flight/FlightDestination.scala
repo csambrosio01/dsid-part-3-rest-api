@@ -1,4 +1,4 @@
-package model.amadeus
+package model.amadeus.flight
 
 import java.util.Date
 
