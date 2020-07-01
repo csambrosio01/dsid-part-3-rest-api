@@ -32,4 +32,8 @@ class HotelController @Inject()(
       .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 
+  def getHotelOffersHighlights: Action[AnyContent] = Action.async { _ =>
+    handleReturn[Seq[HotelOffers]](amadeusService.searchHotelOffersHighlights)(Writes.seq(hotelOffersFormat))
+  }
+
 }
