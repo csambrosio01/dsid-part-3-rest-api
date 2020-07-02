@@ -319,4 +319,38 @@ class AmadeusService @Inject()(
           }
       }
   }
+
+  def searchHotelOffersHighlightsHotelPage: Future[Seq[HotelOffers]] = {
+    val hotelOfferRequestLAX = HotelOfferSearchRequest(
+      cityCode = "LAX",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    val hotelOfferRequestPAR = HotelOfferSearchRequest(
+      cityCode = "PAR",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    val hotelOfferRequestSEA = HotelOfferSearchRequest(
+      cityCode = "SEA",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    getHotelOffers(hotelOfferRequestLAX)
+      .flatMap { resultLAX =>
+        getHotelOffers(hotelOfferRequestPAR)
+          .flatMap { resultPAR =>
+            getHotelOffers(hotelOfferRequestSEA)
+              .map { resultSEA =>
+                r.shuffle(resultLAX ++ resultPAR ++ resultSEA)
+              }
+          }
+      }
+  }
 }
