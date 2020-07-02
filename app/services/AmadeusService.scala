@@ -260,9 +260,9 @@ class AmadeusService @Inject()(
           "roomQuantity" -> Some(hotelSearchRequest.roomQuantity),
           "adults" -> Some(hotelSearchRequest.adults),
           "radius" -> Some(hotelSearchRequest.radius),
-          "ratings" -> hotelSearchRequest.ratings.mkString(","),
           "priceRange" -> hotelSearchRequest.priceRange,
-          "lang" -> "pt-BR"
+          "currency" -> Some("USD"),
+          "lang" -> Some("pt-BR")
         )
           .collect {
             case (key, Some(value)) => key -> value.toString
