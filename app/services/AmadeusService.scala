@@ -261,7 +261,7 @@ class AmadeusService @Inject()(
           "adults" -> hotelSearchRequest.adults,
           "radius" -> hotelSearchRequest.radius,
           "priceRange" -> hotelSearchRequest.priceRange,
-          "ratings" -> hotelSearchRequest.ratings,
+          "ratings" -> hotelSearchRequest.ratings.mkString(","),
           "currency" -> "USD",
           "lang" -> "pt-BR"
         )
