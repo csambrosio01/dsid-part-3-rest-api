@@ -8,7 +8,7 @@ case class HotelOfferSearchRequest(
                                     checkOutDate: String,
                                     roomQuantity: Int = 1,
                                     adults: Int = 1,
-                                    radius: Int = 5,
+                                    radius: Int = 20,
                                     ratings: Option[Seq[Int]] = None,
                                     priceRange: Option[String] = None
                                   )
