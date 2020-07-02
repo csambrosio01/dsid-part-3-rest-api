@@ -312,7 +312,7 @@ class AmadeusService @Inject()(
           .flatMap { resultLAS =>
             getHotelOffers(hotelOfferRequestLON)
               .map { resultLON =>
-                Seq(resultNYC.head, resultLAS.head, resultLON.head)
+                resultNYC ++ resultLAS ++ resultLON
               }
           }
       }
