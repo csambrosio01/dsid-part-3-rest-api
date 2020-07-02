@@ -169,7 +169,7 @@ case class FareDetailsBySegment(
                                  `class`: Option[String],
                                  isAllotment: Option[Boolean],
                                  allotmentDetails: Option[AllotmentDetail],
-                                 includedCheckedBags: IncludedCheckedBags,
+                                 includedCheckedBags: Option[IncludedCheckedBags],
                                  additionalServices: Option[AdditionalServiceRequest]
                                )
 

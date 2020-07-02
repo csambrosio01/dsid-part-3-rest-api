@@ -254,18 +254,19 @@ class AmadeusService @Inject()(
     val response = prepareAmadeusRequest("/v2/shopping/hotel-offers")
       .flatMap { request =>
         val parameters = Seq(
-          "cityCode" -> Some(hotelSearchRequest.cityCode),
-          "checkInDate" -> Some(hotelSearchRequest.checkInDate),
-          "checkOutDate" -> Some(hotelSearchRequest.checkOutDate),
-          "roomQuantity" -> Some(hotelSearchRequest.roomQuantity),
-          "adults" -> Some(hotelSearchRequest.adults),
-          "radius" -> Some(hotelSearchRequest.radius),
-          "ratings" -> hotelSearchRequest.ratings.mkString(","),
+          "cityCode" -> hotelSearchRequest.cityCode,
+          "checkInDate" -> hotelSearchRequest.checkInDate,
+          "checkOutDate" -> hotelSearchRequest.checkOutDate,
+          "roomQuantity" -> hotelSearchRequest.roomQuantity,
+          "adults" -> hotelSearchRequest.adults,
+          "radius" -> hotelSearchRequest.radius,
           "priceRange" -> hotelSearchRequest.priceRange,
+          "ratings" -> hotelSearchRequest.ratings.mkString(","),
+          "currency" -> "USD",
           "lang" -> "pt-BR"
         )
           .collect {
-            case (key, Some(value)) => key -> value.toString
+            case (key, value) => key -> value.toString
           }
 
         request
@@ -288,22 +289,22 @@ class AmadeusService @Inject()(
     val hotelOfferRequestNYC = HotelOfferSearchRequest(
       cityCode = "NYC",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
-      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(4, 5))
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(4)
     )
 
     val hotelOfferRequestLAS = HotelOfferSearchRequest(
       cityCode = "CHI",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
-      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(4, 5))
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(4)
     )
 
     val hotelOfferRequestLON = HotelOfferSearchRequest(
       cityCode = "LON",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
-      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(2, 3))
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2)
     )
 
     getHotelOffers(hotelOfferRequestNYC)
@@ -312,7 +313,7 @@ class AmadeusService @Inject()(
           .flatMap { resultLAS =>
             getHotelOffers(hotelOfferRequestLON)
               .map { resultLON =>
-                Seq(resultNYC.head, resultLAS.head, resultLON.head)
+                resultNYC ++ resultLAS ++ resultLON
               }
           }
       }
