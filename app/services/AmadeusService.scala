@@ -31,6 +31,7 @@ class AmadeusService @Inject()(
   override val service = "amadeus"
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
   val oneDayInMillis = 24 * 60 * 60 * 1000
+  val r = scala.util.Random
 
   private def prepareAmadeusRequest(url: String): Future[WSRequest] = {
     client.getAccessToken
@@ -313,7 +314,7 @@ class AmadeusService @Inject()(
           .flatMap { resultLAX =>
             getHotelOffers(hotelOfferRequestLON)
               .map { resultLON =>
-                resultNYC ++ resultLAX ++ resultLON
+                r.shuffle(resultNYC ++ resultLAX ++ resultLON)
               }
           }
       }
