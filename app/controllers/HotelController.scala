@@ -36,4 +36,8 @@ class HotelController @Inject()(
     handleReturn[Seq[HotelOffers]](amadeusService.searchHotelOffersHighlights)(Writes.seq(hotelOffersFormat))
   }
 
+  def getHotelOffersHighlightsHotelPage: Action[AnyContent] = Action.async { _ =>
+    handleReturn[Seq[HotelOffers]](amadeusService.searchHotelOffersHighlightsHotelPage)(Writes.seq(hotelOffersFormat))
+  }
+
 }
