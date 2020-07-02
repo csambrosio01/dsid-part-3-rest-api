@@ -31,6 +31,7 @@ class AmadeusService @Inject()(
   override val service = "amadeus"
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
   val oneDayInMillis = 24 * 60 * 60 * 1000
+  val r = scala.util.Random
 
   private def prepareAmadeusRequest(url: String): Future[WSRequest] = {
     client.getAccessToken
@@ -293,8 +294,8 @@ class AmadeusService @Inject()(
       ratings = Seq(4)
     )
 
-    val hotelOfferRequestLAS = HotelOfferSearchRequest(
-      cityCode = "CHI",
+    val hotelOfferRequestLAX = HotelOfferSearchRequest(
+      cityCode = "LAX",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
       ratings = Seq(4)
@@ -309,11 +310,45 @@ class AmadeusService @Inject()(
 
     getHotelOffers(hotelOfferRequestNYC)
       .flatMap { resultNYC =>
-        getHotelOffers(hotelOfferRequestLAS)
-          .flatMap { resultLAS =>
+        getHotelOffers(hotelOfferRequestLAX)
+          .flatMap { resultLAX =>
             getHotelOffers(hotelOfferRequestLON)
               .map { resultLON =>
-                resultNYC ++ resultLAS ++ resultLON
+                r.shuffle(resultNYC ++ resultLAX ++ resultLON)
+              }
+          }
+      }
+  }
+
+  def searchHotelOffersHighlightsHotelPage: Future[Seq[HotelOffers]] = {
+    val hotelOfferRequestLAX = HotelOfferSearchRequest(
+      cityCode = "LAX",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    val hotelOfferRequestPAR = HotelOfferSearchRequest(
+      cityCode = "PAR",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    val hotelOfferRequestSEA = HotelOfferSearchRequest(
+      cityCode = "SEA",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
+      checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
+      ratings = Seq(2, 3, 4, 5)
+    )
+
+    getHotelOffers(hotelOfferRequestLAX)
+      .flatMap { resultLAX =>
+        getHotelOffers(hotelOfferRequestPAR)
+          .flatMap { resultPAR =>
+            getHotelOffers(hotelOfferRequestSEA)
+              .map { resultSEA =>
+                r.shuffle(resultLAX ++ resultPAR ++ resultSEA)
               }
           }
       }
