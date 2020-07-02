@@ -293,8 +293,8 @@ class AmadeusService @Inject()(
       ratings = Seq(4)
     )
 
-    val hotelOfferRequestLAS = HotelOfferSearchRequest(
-      cityCode = "CHI",
+    val hotelOfferRequestLAX = HotelOfferSearchRequest(
+      cityCode = "LAX",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
       ratings = Seq(4)
@@ -309,11 +309,11 @@ class AmadeusService @Inject()(
 
     getHotelOffers(hotelOfferRequestNYC)
       .flatMap { resultNYC =>
-        getHotelOffers(hotelOfferRequestLAS)
-          .flatMap { resultLAS =>
+        getHotelOffers(hotelOfferRequestLAX)
+          .flatMap { resultLAX =>
             getHotelOffers(hotelOfferRequestLON)
               .map { resultLON =>
-                resultNYC ++ resultLAS ++ resultLON
+                resultNYC ++ resultLAX ++ resultLON
               }
           }
       }
