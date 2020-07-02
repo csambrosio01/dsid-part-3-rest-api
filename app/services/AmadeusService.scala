@@ -290,21 +290,21 @@ class AmadeusService @Inject()(
       cityCode = "NYC",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
-      ratings = 4
+      ratings = Seq(4)
     )
 
     val hotelOfferRequestLAS = HotelOfferSearchRequest(
       cityCode = "CHI",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
-      ratings = 4
+      ratings = Seq(4)
     )
 
     val hotelOfferRequestLON = HotelOfferSearchRequest(
       cityCode = "LON",
       checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (2 * oneDayInMillis))),
-      ratings = 2
+      ratings = Seq(2)
     )
 
     getHotelOffers(hotelOfferRequestNYC)

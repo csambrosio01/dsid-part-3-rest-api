@@ -9,7 +9,7 @@ case class HotelOfferSearchRequest(
                                     roomQuantity: Int = 1,
                                     adults: Int = 1,
                                     radius: Int = 20,
-                                    ratings: Int = 5,
+                                    ratings: Seq[Int] = Seq(2, 3, 4, 5),
                                     priceRange: String = "100-1000"
                                   )
 
