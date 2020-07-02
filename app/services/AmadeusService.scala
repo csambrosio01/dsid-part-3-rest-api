@@ -254,18 +254,19 @@ class AmadeusService @Inject()(
     val response = prepareAmadeusRequest("/v2/shopping/hotel-offers")
       .flatMap { request =>
         val parameters = Seq(
-          "cityCode" -> Some(hotelSearchRequest.cityCode),
-          "checkInDate" -> Some(hotelSearchRequest.checkInDate),
-          "checkOutDate" -> Some(hotelSearchRequest.checkOutDate),
-          "roomQuantity" -> Some(hotelSearchRequest.roomQuantity),
-          "adults" -> Some(hotelSearchRequest.adults),
-          "radius" -> Some(hotelSearchRequest.radius),
+          "cityCode" -> hotelSearchRequest.cityCode,
+          "checkInDate" -> hotelSearchRequest.checkInDate,
+          "checkOutDate" -> hotelSearchRequest.checkOutDate,
+          "roomQuantity" -> hotelSearchRequest.roomQuantity,
+          "adults" -> hotelSearchRequest.adults,
+          "radius" -> hotelSearchRequest.radius,
           "priceRange" -> hotelSearchRequest.priceRange,
-          "currency" -> Some("USD"),
-          "lang" -> Some("pt-BR")
+          "ratings" -> hotelSearchRequest.ratings,
+          "currency" -> "USD",
+          "lang" -> "pt-BR"
         )
           .collect {
-            case (key, Some(value)) => key -> value.toString
+            case (key, value) => key -> value.toString
           }
 
         request
