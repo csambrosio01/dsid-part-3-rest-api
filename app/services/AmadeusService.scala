@@ -1,7 +1,7 @@
 package services
 
 import java.text.SimpleDateFormat
-import java.util.{Calendar, Date}
+import java.util.Date
 
 import clients.AmadeusClient
 import exception.{AccessTokenException, NotFoundException}
@@ -11,8 +11,8 @@ import model.amadeus._
 import model.amadeus.flight.FlightDestination._
 import model.amadeus.flight.FlightOfferSearch._
 import model.amadeus.flight._
-import model.amadeus.hotel.{HotelOfferSearchRequest, HotelOffers, HotelOffersResult}
 import model.amadeus.hotel.HotelOffers._
+import model.amadeus.hotel.{HotelOfferSearchRequest, HotelOffers, HotelOffersResult}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import requests.BaseExternalRequests
@@ -29,6 +29,8 @@ class AmadeusService @Inject()(
   extends BaseExternalRequests(ws) {
 
   override val service = "amadeus"
+  val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+  val oneDayInMillis = 24 * 60 * 60 * 1000
 
   private def prepareAmadeusRequest(url: String): Future[WSRequest] = {
     client.getAccessToken
@@ -119,11 +121,10 @@ class AmadeusService @Inject()(
   }
 
   def searchFlightOffersHighlights: Future[Seq[FlightOfferSearch]] = {
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
     val flightOfferRequestNYCToBOS = FlightOfferRequest(
       originLocationCode = "NYC",
       destinationLocationCode = "BOS",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -131,7 +132,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestAMSToMAD = FlightOfferRequest(
       originLocationCode = "AMS",
       destinationLocationCode = "MAD",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -139,7 +140,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestBRUToLHR = FlightOfferRequest(
       originLocationCode = "BRU",
       destinationLocationCode = "LHR",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -161,7 +162,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestNYCToWAS = FlightOfferRequest(
       originLocationCode = "NYC",
       destinationLocationCode = "WAS",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -169,7 +170,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestAMSToLHR = FlightOfferRequest(
       originLocationCode = "AMS",
       destinationLocationCode = "LHR",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -177,7 +178,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestBRUToDAL = FlightOfferRequest(
       originLocationCode = "BRU",
       destinationLocationCode = "PAR",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -185,7 +186,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestLASToBRU = FlightOfferRequest(
       originLocationCode = "LAS",
       destinationLocationCode = "BRU",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -193,7 +194,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestORDToHND = FlightOfferRequest(
       originLocationCode = "ORD",
       destinationLocationCode = "HND",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -201,7 +202,7 @@ class AmadeusService @Inject()(
     val flightOfferRequestATLToLUR = FlightOfferRequest(
       originLocationCode = "ATL",
       destinationLocationCode = "SEA",
-      departureDate = dateFormat.format(Calendar.getInstance().getTime),
+      departureDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       adults = 1,
       max = Some(1)
     )
@@ -284,27 +285,25 @@ class AmadeusService @Inject()(
   }
 
   def searchHotelOffersHighlights: Future[Seq[HotelOffers]] = {
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-    val oneDayInMillis = 24 * 60 * 60 * 1000
     val hotelOfferRequestNYC = HotelOfferSearchRequest(
       cityCode = "NYC",
-      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(4,5))
+      ratings = Some(Seq(4, 5))
     )
 
     val hotelOfferRequestLAS = HotelOfferSearchRequest(
-      cityCode = "LAS",
-      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      cityCode = "CHI",
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(3,4))
+      ratings = Some(Seq(4, 5))
     )
 
     val hotelOfferRequestLON = HotelOfferSearchRequest(
       cityCode = "LON",
-      checkInDate = dateFormat.format(Calendar.getInstance().getTime),
+      checkInDate = dateFormat.format(new Date(System.currentTimeMillis() + oneDayInMillis)),
       checkOutDate = dateFormat.format(new Date(System.currentTimeMillis() + (7 * oneDayInMillis))),
-      ratings = Some(Seq(2,3))
+      ratings = Some(Seq(2, 3))
     )
 
     getHotelOffers(hotelOfferRequestNYC)
