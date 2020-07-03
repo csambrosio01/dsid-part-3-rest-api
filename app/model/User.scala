@@ -16,6 +16,17 @@ case class User(
                  updatedAt: Timestamp
                )
 
+case class Address(
+                    addressId: Option[Long],
+                    address: String,
+                    complement: Option[String],
+                    neighborhood: String,
+                    city: String,
+                    state: String,
+                    zipCode: String,
+                    country: String
+                  )
+
 case class CreateUser(
                        username: String,
                        password: String,
@@ -25,6 +36,7 @@ case class CreateUser(
                      )
 
 object User {
+  implicit val addressFormat: OFormat[Address] = Json.format[Address]
   implicit val userFormat: OFormat[User] = Json.format[User]
   implicit val createUserRead: Reads[CreateUser] = Json.reads[CreateUser]
 }
