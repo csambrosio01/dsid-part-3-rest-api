@@ -26,7 +26,9 @@ private class AddressTable(tag: Tag) extends Table[Address](tag, "address") {
 
   def country = column[String]("country")
 
-  def * = (addressId, address, complement, neighborhood, city, state, zipCode, country) <> ((Address.apply _).tupled, Address.unapply)
+  def number = column[String]("number")
+
+  def * = (addressId, address, complement, neighborhood, city, state, zipCode, country, number) <> ((Address.apply _).tupled, Address.unapply)
 }
 
 class SqlAddressRepository @Inject() (
@@ -43,10 +45,7 @@ class SqlAddressRepository @Inject() (
   private val addresses = TableQuery[AddressTable]
 
   override def create(address: Address): Future[Address] = {
-    val insert = addresses.map { a =>
-      (a.address, a.complement, a.neighborhood, a.city, a.state, a.zipCode, a.country)
-    }
-      .returning(addresses) += (address.address, address.complement, address.neighborhood, address.city, address.state, address.zipCode, address.country)
+    val insert = addresses.returning(addresses) += address
 
     db.run(insert)
   }

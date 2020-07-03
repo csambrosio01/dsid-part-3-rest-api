@@ -25,7 +25,8 @@ case class Address(
                     city: String,
                     state: String,
                     zipCode: String,
-                    country: String
+                    country: String,
+                    number: String
                   )
 
 case class CreateUser(
