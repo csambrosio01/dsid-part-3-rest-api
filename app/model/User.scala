@@ -38,7 +38,17 @@ case class CreateUser(
                        address: Address
                      )
 
+case class AddressResponse(
+                            address: String,
+                            neighborhood: String,
+                            city: String,
+                            state: String,
+                            zipCode: String,
+                            country: String
+                          )
+
 object User {
+  implicit val addressResponseFormat: OFormat[AddressResponse] = Json.format[AddressResponse]
   implicit val addressFormat: OFormat[Address] = Json.format[Address]
   implicit val userFormat: OFormat[User] = Json.format[User]
   implicit val createUserRead: Reads[CreateUser] = Json.reads[CreateUser]
