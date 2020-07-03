@@ -4,12 +4,11 @@ import exception.{PasswordException, WrongCredentialsException}
 import javax.inject.Inject
 import model.Login._
 import model.User._
-import model.{CreateUser, Login, User}
+import model.{AddressResponse, CreateUser, Login, User}
 import org.postgresql.util.PSQLException
-import play.api.Logging
 import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Cookie, Request, Result}
 import services.UserService
 import services.session.SessionService
 
@@ -27,10 +26,7 @@ class UserController @Inject() (
                                (
                                  implicit ec: ExecutionContext
                                )
-  extends AbstractController(cc)
-    with Logging {
-
-  implicit val lang: Lang = langs.availables.head
+  extends BaseController(cc, langs, messagesApi) {
 
   def configureSession(user: User, sessionId: String, encryptedCookie: Cookie, request: Request[AnyContent]): Result = {
     val session = request.session + (SESSION_ID -> sessionId)
@@ -117,5 +113,9 @@ class UserController @Inject() (
       ) { user =>
         Future.successful(Ok(Json.toJson(user)))
       }
+  }
+
+  def getZipCode(zipCode: String): Action[AnyContent] = Action.async { _ =>
+    handleReturn[AddressResponse](userService.getZipCode(zipCode))
   }
 }

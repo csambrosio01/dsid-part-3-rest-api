@@ -12,19 +12,44 @@ case class User(
                  name: String,
                  email: String,
                  phoneNumber: String,
+                 addressId: Long,
                  createdAt: Timestamp,
                  updatedAt: Timestamp
                )
+
+case class Address(
+                    addressId: Option[Long],
+                    address: String,
+                    complement: Option[String],
+                    neighborhood: String,
+                    city: String,
+                    state: String,
+                    zipCode: String,
+                    country: String,
+                    number: String
+                  )
 
 case class CreateUser(
                        username: String,
                        password: String,
                        name: String,
                        email: String,
-                       phoneNumber: String
+                       phoneNumber: String,
+                       address: Address
                      )
 
+case class AddressResponse(
+                            address: String,
+                            neighborhood: String,
+                            city: String,
+                            state: String,
+                            zipCode: String,
+                            country: String
+                          )
+
 object User {
+  implicit val addressResponseFormat: OFormat[AddressResponse] = Json.format[AddressResponse]
+  implicit val addressFormat: OFormat[Address] = Json.format[Address]
   implicit val userFormat: OFormat[User] = Json.format[User]
   implicit val createUserRead: Reads[CreateUser] = Json.reads[CreateUser]
 }
