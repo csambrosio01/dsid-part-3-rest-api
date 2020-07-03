@@ -8,6 +8,8 @@ GET         /health-check                               controllers.BaseControll
 POST        /users/create                               controllers.UserController.createUser
 GET         /users/logged                               controllers.UserController.getLoggedUser
 
+GET         /zipCode/:zipCode                           controllers.UserController.getZipCode(zipCode: String)
+
 POST        /login                                      controllers.UserController.login
 POST        /logout                                     controllers.UserController.logout
 
