@@ -12,6 +12,7 @@ case class User(
                  name: String,
                  email: String,
                  phoneNumber: String,
+                 addressId: Long,
                  createdAt: Timestamp,
                  updatedAt: Timestamp
                )
@@ -32,7 +33,8 @@ case class CreateUser(
                        password: String,
                        name: String,
                        email: String,
-                       phoneNumber: String
+                       phoneNumber: String,
+                       address: Address
                      )
 
 object User {

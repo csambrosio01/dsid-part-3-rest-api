@@ -24,15 +24,18 @@ private class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   def phoneNumber = column[String]("phone_number", O.Unique)
 
+  def addressId = column[Long]("address_id")
+
   def createdAt = column[Timestamp]("created_at")
 
   def updatedAt = column[Timestamp]("updated_at")
 
-  def * = (userId, username, password, name, email, phoneNumber, createdAt, updatedAt) <> ((User.apply _).tupled, User.unapply)
+  def * = (userId, username, password, name, email, phoneNumber, addressId, createdAt, updatedAt) <> ((User.apply _).tupled, User.unapply)
 }
 
 class SqlUserRepository @Inject()(
-                                   protected val dbConfigProvider: DatabaseConfigProvider
+                                   protected val dbConfigProvider: DatabaseConfigProvider,
+                                   addressRepository: AddressRepository
                                  )
                                  (
                                    implicit ec: ExecutionContext
@@ -45,12 +48,15 @@ class SqlUserRepository @Inject()(
   private val users = TableQuery[UserTable]
 
   override def create(user: CreateUser): Future[User] = {
-    val insert = users.map { u =>
-      (u.username, u.password, u.name, u.email, u.phoneNumber)
-    }
-      .returning(users) += (user.username, user.password, user.name, user.email, user.phoneNumber)
+    addressRepository.create(user.address)
+      .flatMap { address =>
+        val insert = users.map { u =>
+          (u.username, u.password, u.name, u.email, u.phoneNumber, u.addressId)
+        }
+          .returning(users) += ((user.username, user.password, user.name, user.email, user.phoneNumber, address.addressId.get))
 
-    db.run(insert)
+        db.run(insert)
+      }
   }
 
   override def findUserByUsername(username: String): Future[Option[User]] = {
