@@ -15,7 +15,11 @@ object Dependencies {
   private val akkaDistributedData = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
   private val akkaClusterTyped = "com.typesafe.akka" %% "akka-cluster-typed" % akkaVersion
 
+  //Mailer
+  private val mailer = "com.typesafe.play" %% "play-mailer" % "8.0.1"
+  private val mailerGuice = "com.typesafe.play" %% "play-mailer-guice" % "8.0.1"
+
   val dependencies = Seq(
-    guice, scalaTest, playSlick, playSlickEvolutions, postgres, kalium, akkaDistributedData, akkaClusterTyped, ws
+    guice, scalaTest, playSlick, playSlickEvolutions, postgres, kalium, akkaDistributedData, akkaClusterTyped, ws, mailer, mailerGuice
   )
 }
