@@ -4,6 +4,7 @@ import exception.{NotFoundException, PasswordException, WrongCredentialsExceptio
 import javax.inject.Inject
 import model.{AddressResponse, CreateUser, Login, User}
 import persistance.user.UserRepository
+import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.ws.WSClient
 import requests.BaseExternalRequests
 
@@ -11,12 +12,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UserService @Inject()(
                              userRepository: UserRepository,
-                             ws: WSClient
+                             ws: WSClient,
+                             langs: Langs,
+                             messagesApi: MessagesApi
                            )
                            (
                              implicit ec: ExecutionContext
                            )
   extends BaseExternalRequests(ws) {
+
+  implicit val lang: Lang = langs.availables.head
 
   def createUser(user: CreateUser): Future[User] = {
     if (user.password.matches("""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#(){}?:;><=.,^~_+-\[\]])[A-Za-z\d@$!%*?&#(){}?:;><=.,^~_+-\[\]]{8,40}$""")) {
