@@ -7,6 +7,7 @@ GET         /health-check                               controllers.BaseControll
 
 POST        /users/create                               controllers.UserController.createUser
 GET         /users/logged                               controllers.UserController.getLoggedUser
+POST        /users/recover-password                     controllers.UserController.recoverPassword
 
 GET         /zipCode/:zipCode                           controllers.UserController.getZipCode(zipCode: String)
 

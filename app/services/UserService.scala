@@ -4,6 +4,7 @@ import exception.{NotFoundException, PasswordException, WrongCredentialsExceptio
 import javax.inject.Inject
 import model.{AddressResponse, CreateUser, Login, User}
 import persistance.user.UserRepository
+import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.ws.WSClient
 import requests.BaseExternalRequests
 
@@ -11,12 +12,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UserService @Inject()(
                              userRepository: UserRepository,
-                             ws: WSClient
+                             ws: WSClient,
+                             emailService: EmailService,
+                             langs: Langs,
+                             messagesApi: MessagesApi
                            )
                            (
                              implicit ec: ExecutionContext
                            )
   extends BaseExternalRequests(ws) {
+
+  implicit val lang: Lang = langs.availables.head
 
   def createUser(user: CreateUser): Future[User] = {
     if (user.password.matches("""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#(){}?:;><=.,^~_+-\[\]])[A-Za-z\d@$!%*?&#(){}?:;><=.,^~_+-\[\]]{8,40}$""")) {
@@ -67,6 +73,19 @@ class UserService @Inject()(
           )
         } else {
           throw NotFoundException("cep.not_found")
+        }
+      }
+  }
+
+  def recoverPassword(email: String): Future[String] = {
+    userRepository.findUserByEmail(email)
+      .flatMap { user =>
+        user.fold(throw WrongCredentialsException("user.login.wrong_credentials")) { user =>
+          emailService.sendEmail(
+            messagesApi("mailer.recover_password"),
+            Seq(s"${user.name} <${user.email}>"),
+            Some(views.html.RecoverPassword(user).toString())
+          )
         }
       }
   }

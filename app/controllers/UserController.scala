@@ -4,7 +4,7 @@ import exception.{PasswordException, WrongCredentialsException}
 import javax.inject.Inject
 import model.Login._
 import model.User._
-import model.{AddressResponse, CreateUser, Login, User}
+import model.{AddressResponse, CreateUser, Login, RecoverPassword, User}
 import org.postgresql.util.PSQLException
 import play.api.i18n.{Lang, Langs, MessagesApi}
 import play.api.libs.json.Json
@@ -117,5 +117,27 @@ class UserController @Inject() (
 
   def getZipCode(zipCode: String): Action[AnyContent] = Action.async { _ =>
     handleReturn[AddressResponse](userService.getZipCode(zipCode))
+  }
+
+  def recoverPassword: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    request
+      .body
+      .asJson
+      .map(_.as[RecoverPassword])
+      .map { recoverPassword =>
+        val futureRecoverPassword = userService.recoverPassword(recoverPassword.email)
+
+        futureRecoverPassword.map { emailId =>
+          Ok(emailId)
+        }
+          .recover {
+            case e: WrongCredentialsException =>
+              logger.warn(e.message)
+              BadRequest(Json.obj("error" -> messagesApi(e.getMessage)))
+
+            case _ => BadRequest(Json.obj("error" -> messagesApi("user.login.generic_error")))
+          }
+      }
+      .getOrElse(Future.successful(BadRequest(Json.obj("error" -> messagesApi("pousar.bad_json")))))
   }
 }
