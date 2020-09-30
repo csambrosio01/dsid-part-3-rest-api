@@ -14,3 +14,5 @@ user.unauthorized=Você precisa estar logado para prosseguir com esta ação.
 
 pousar.bad_json=A requisição enviada não pode ser processada. Por favor, entre em contato com o suporte ao cliente.
 pousar.generic_error=Algum erro inesperado ocorreu, por favor, tente novamente mais tarde
+
+mailer.recover_password=Recuperação de senha

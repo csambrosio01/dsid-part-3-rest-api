@@ -13,6 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserService @Inject()(
                              userRepository: UserRepository,
                              ws: WSClient,
+                             emailService: EmailService,
                              langs: Langs,
                              messagesApi: MessagesApi
                            )
@@ -72,6 +73,19 @@ class UserService @Inject()(
           )
         } else {
           throw NotFoundException("cep.not_found")
+        }
+      }
+  }
+
+  def recoverPassword(email: String): Future[String] = {
+    userRepository.findUserByEmail(email)
+      .flatMap { user =>
+        user.fold(throw WrongCredentialsException("user.login.wrong_credentials")) { user =>
+          emailService.sendEmail(
+            messagesApi("mailer.recover_password"),
+            Seq(s"${user.name} <${user.email}>"),
+            Some(views.html.RecoverPassword(user).toString())
+          )
         }
       }
   }
