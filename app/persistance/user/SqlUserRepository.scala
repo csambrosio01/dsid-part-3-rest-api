@@ -64,4 +64,10 @@ class SqlUserRepository @Inject()(
 
     db.run(query.result.headOption)
   }
+
+  override def findUserByEmail(usernameOrEmail: String): Future[Option[User]] = {
+    val query = users.filter(_.email === usernameOrEmail)
+
+    db.run(query.result.headOption)
+  }
 }
